@@ -4,13 +4,17 @@ import { persist } from 'zustand/middleware';
 export interface Company {
   id: number;
   name: string;
+  slug: string;
+  status: string;            // e.g. "active"
+  enabled_modules: string[]; // e.g. ["hr", "payroll"]
+  is_default: boolean;
 }
 
 export interface User {
   id: number;
   name: string;
   email: string;
-  companies: Company[];
+  is_super_admin: boolean;
 }
 
 interface AuthState {
@@ -32,6 +36,6 @@ export const useAuthStore = create<AuthState>()(
       setActiveCompany: (company) => set({ activeCompany: company }),
       logout: () => set({ token: null, user: null, activeCompany: null }),
     }),
-    { name: 'auth' }, // localStorage key
+    { name: 'auth' },
   ),
 );
