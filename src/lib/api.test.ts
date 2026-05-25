@@ -41,7 +41,7 @@ describe('api request interceptor', () => {
       useAuthStore.setState({
         token: 'tok_abc',
         user: null,
-        activeCompany: { id: 42, name: 'Acme' },
+        activeCompany: { id: 42, name: 'Acme', slug: 'acme', status: 'active', enabled_modules: [], is_default: true },
       });
     });
     mock.onGet('/test').reply((config) => {
