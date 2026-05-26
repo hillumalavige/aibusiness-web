@@ -28,14 +28,28 @@ beforeEach(() => {
   });
 });
 
+// Backend wraps all responses in { success, message, data: <payload> }
+// Axios wraps the HTTP body in r.data, so the hook receives r.data.data = <payload>
+const mockCompany = {
+  id: 10,
+  name: 'Acme',
+  slug: 'acme',
+  status: 'active',
+  enabled_modules: [],
+  is_default: true,
+};
+
 const mockLoginResponse = {
   data: {
-    token: 'tok_123',
-    user: {
-      id: 1,
-      name: 'Alice',
-      email: 'alice@example.com',
-      companies: [{ id: 10, name: 'Acme' }],
+    data: {
+      token: 'tok_123',
+      user: {
+        id: 1,
+        name: 'Alice',
+        email: 'alice@example.com',
+        is_super_admin: false,
+      },
+      companies: [mockCompany],
     },
   },
 };
@@ -54,7 +68,7 @@ describe('useLogin', () => {
     expect(useAuthStore.getState().user?.email).toBe('alice@example.com');
   });
 
-  it('auto-selects the first company on success', async () => {
+  it('auto-selects the default company on success', async () => {
     mockedApi.post.mockResolvedValue(mockLoginResponse);
     const { result } = renderHook(() => useLogin(), { wrapper });
 
@@ -63,7 +77,7 @@ describe('useLogin', () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(useAuthStore.getState().activeCompany).toEqual({ id: 10, name: 'Acme' });
+    expect(useAuthStore.getState().activeCompany).toEqual(mockCompany);
   });
 
   it('marks as error on failure', async () => {
@@ -85,8 +99,8 @@ describe('useLogout', () => {
     act(() => {
       useAuthStore.setState({
         token: 'tok_123',
-        user: { id: 1, name: 'Alice', email: 'a@b.com', companies: [] },
-        activeCompany: { id: 10, name: 'Acme' },
+        user: { id: 1, name: 'Alice', email: 'a@b.com', is_super_admin: false },
+        activeCompany: mockCompany,
       });
     });
     const { result } = renderHook(() => useLogout(), { wrapper });
