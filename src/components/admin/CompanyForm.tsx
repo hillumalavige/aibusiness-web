@@ -11,6 +11,8 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import type { AdminCompany, CreateCompanyInput } from '@/hooks/useAdminCompanies';
 
+type CompanyStatus = 'trial' | 'active' | 'suspended';
+
 interface CompanyFormProps {
   initialValues?: Partial<AdminCompany>;
   onSubmit: (values: CreateCompanyInput) => void;
@@ -24,8 +26,8 @@ export default function CompanyForm({ initialValues, onSubmit, isLoading, onCanc
   const [phone, setPhone] = useState(initialValues?.phone ?? '');
   const [city, setCity] = useState(initialValues?.city ?? '');
   const [country, setCountry] = useState(initialValues?.country ?? 'LK');
-  const [status, setStatus] = useState<'trial' | 'active' | 'suspended'>(
-    (initialValues?.status as 'trial' | 'active' | 'suspended') ?? 'trial',
+  const [status, setStatus] = useState<CompanyStatus>(
+    (initialValues?.status as CompanyStatus) ?? 'trial',
   );
   const [nameError, setNameError] = useState('');
 
@@ -100,7 +102,7 @@ export default function CompanyForm({ initialValues, onSubmit, isLoading, onCanc
             labelId="status-label"
             label="Status"
             value={status}
-            onChange={(e) => setStatus(e.target.value as 'trial' | 'active' | 'suspended')}
+            onChange={(e) => setStatus(e.target.value as CompanyStatus)}
             SelectDisplayProps={{ 'aria-label': 'Status' } as React.HTMLAttributes<HTMLDivElement>}
           >
             <MenuItem value="trial">Trial</MenuItem>
@@ -112,9 +114,11 @@ export default function CompanyForm({ initialValues, onSubmit, isLoading, onCanc
           <Button type="submit" variant="contained" disabled={isLoading}>
             Save
           </Button>
-          <Button type="button" variant="outlined" onClick={onCancel ?? (() => {})}>
-            Cancel
-          </Button>
+          {onCancel && (
+            <Button type="button" variant="outlined" onClick={onCancel}>
+              Cancel
+            </Button>
+          )}
         </Stack>
       </Stack>
     </Box>

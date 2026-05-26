@@ -18,10 +18,15 @@ describe('CompanyForm', () => {
     expect(screen.getByRole('combobox', { name: /status/i })).toBeInTheDocument();
   });
 
-  it('renders Save and Cancel buttons', () => {
-    render(<CompanyForm onSubmit={mockSubmit} isLoading={false} />);
+  it('renders Save and Cancel buttons when onCancel is provided', () => {
+    render(<CompanyForm onSubmit={mockSubmit} isLoading={false} onCancel={jest.fn()} />);
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+  });
+
+  it('does not render Cancel button when onCancel is not provided', () => {
+    render(<CompanyForm onSubmit={mockSubmit} isLoading={false} />);
+    expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
   });
 
   it('pre-fills fields from initialValues', () => {
