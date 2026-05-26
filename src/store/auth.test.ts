@@ -5,13 +5,19 @@ const mockUser = {
   id: 1,
   name: 'Alice',
   email: 'alice@example.com',
-  companies: [{ id: 10, name: 'Acme' }],
+  is_super_admin: false,
 };
 
-const mockCompany = { id: 10, name: 'Acme' };
+const mockCompany = {
+  id: 10,
+  name: 'Acme',
+  slug: 'acme',
+  status: 'active',
+  enabled_modules: ['hr', 'payroll'],
+  is_default: true,
+};
 
 beforeEach(() => {
-  // Reset store to initial state before each test
   act(() => {
     useAuthStore.setState({ token: null, user: null, activeCompany: null });
   });
