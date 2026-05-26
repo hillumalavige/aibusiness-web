@@ -91,4 +91,14 @@ describe('useCompanies', () => {
     expect(result.current.data).toEqual(mockCompanies);
     expect(mockedApi.get).toHaveBeenCalledWith('/me/companies');
   });
+
+  it('does not fetch when no token', async () => {
+    act(() => {
+      useAuthStore.setState({ token: null, user: null, activeCompany: null });
+    });
+    renderHook(() => useCompanies(), { wrapper });
+
+    await new Promise((r) => setTimeout(r, 50));
+    expect(mockedApi.get).not.toHaveBeenCalled();
+  });
 });

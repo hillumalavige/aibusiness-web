@@ -10,6 +10,7 @@ export function useMe() {
     queryFn: () =>
       api
         .get<{ data: { user: User; companies: Company[] } }>('/me')
+        // companies from /me is ignored here; use useCompanies() for the list
         .then((r) => r.data.data.user),
     enabled: !!token,
   });
