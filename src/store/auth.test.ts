@@ -5,6 +5,7 @@ const mockUser = {
   id: 1,
   name: 'Alice',
   email: 'alice@example.com',
+  phone: null,
   is_super_admin: false,
 };
 
