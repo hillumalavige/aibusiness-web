@@ -66,6 +66,12 @@ describe('AppShell', () => {
     expect(screen.getByText('Alice Smith')).toBeInTheDocument();
   });
 
+  it('renders the username as a link to /profile', () => {
+    render(<AppShell><div>Content</div></AppShell>);
+    const link = screen.getByRole('link', { name: 'Alice Smith' });
+    expect(link).toHaveAttribute('href', '/profile');
+  });
+
   it('hides user name when user is not authenticated', () => {
     mockUseAuthStore.mockImplementation((selector: any) =>
       selector({ user: null, activeCompany: null }),

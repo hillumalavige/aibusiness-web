@@ -15,6 +15,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import PeopleIcon from '@mui/icons-material/People';
 import EventIcon from '@mui/icons-material/Event';
 import ChatIcon from '@mui/icons-material/Chat';
+import Link from 'next/link';
 import CompanySwitcher from '@/components/CompanySwitcher';
 import NavItem from '@/components/NavItem';
 import { useAuthStore } from '@/store/auth';
@@ -38,7 +39,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             aibusiness
           </Typography>
           {userName && (
-            <Typography variant="body2" sx={{ mr: 2, opacity: 0.9 }}>
+            <Typography
+              component={Link}
+              href="/profile"
+              variant="body2"
+              sx={{ mr: 2, opacity: 0.9, color: 'inherit', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
               {userName}
             </Typography>
           )}
