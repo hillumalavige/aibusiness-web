@@ -70,4 +70,23 @@ describe('ModuleManager', () => {
     fireEvent.click(screen.getByRole('button', { name: /revoke human resources/i }));
     expect(mockDetachMutate).toHaveBeenCalledWith('hr');
   });
+
+  it('only disables the row being mutated, not all rows', () => {
+    // Simulate detach mutation pending for 'hr'
+    mockHooks.useDetachModule.mockReturnValue({
+      mutate: mockDetachMutate,
+      isPending: true,
+      variables: 'hr',
+    } as any);
+
+    render(<ModuleManager companyId={1} />, { wrapper });
+
+    // The Revoke HR button should be disabled (it's the one being mutated)
+    expect(screen.getByRole('button', { name: /revoke human resources/i })).toBeDisabled();
+
+    // All Grant buttons (non-granted modules) should NOT be disabled
+    expect(screen.getByRole('button', { name: /grant customer relationship management/i })).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: /grant inventory/i })).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: /grant accounting/i })).not.toBeDisabled();
+  });
 });

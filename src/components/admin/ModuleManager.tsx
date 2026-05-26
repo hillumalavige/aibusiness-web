@@ -38,13 +38,16 @@ export default function ModuleManager({ companyId }: ModuleManagerProps) {
       <List>
         {allModules.map((mod) => {
           const granted = grantedKeys.has(mod.key);
-          const isWorking = granted ? detach.isPending : attach.isPending;
+          const isAttaching = attach.isPending && attach.variables === mod.key;
+          const isDetaching = detach.isPending && detach.variables === mod.key;
+          const isWorking = granted ? isDetaching : isAttaching;
 
           return (
             <ListItem key={mod.key} divider>
               <ListItemText
                 primary={mod.name}
                 secondary={<StatusChip status={granted ? 'granted' : 'not-granted'} />}
+                slotProps={{ secondary: { component: 'div' } }}
               />
               <ListItemSecondaryAction>
                 {granted ? (
