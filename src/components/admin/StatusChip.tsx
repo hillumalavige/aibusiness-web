@@ -1,3 +1,5 @@
+'use client';
+
 import Chip from '@mui/material/Chip';
 
 type Status = 'active' | 'trial' | 'suspended' | 'cancelled' | 'granted' | 'not-granted';
