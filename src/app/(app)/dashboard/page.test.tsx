@@ -43,4 +43,12 @@ describe('DashboardPage', () => {
     const { container } = render(<DashboardPage />);
     expect(container).toBeEmptyDOMElement();
   });
+
+  it('renders nothing when only user is loaded but company is not yet selected', () => {
+    mockUseAuthStore.mockImplementation((selector: any) =>
+      selector({ user: mockUser, activeCompany: null }),
+    );
+    const { container } = render(<DashboardPage />);
+    expect(container).toBeEmptyDOMElement();
+  });
 });

@@ -1,6 +1,5 @@
 'use client';
 
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -14,17 +13,15 @@ export default function DashboardPage() {
   if (!user || !activeCompany) return null;
 
   return (
-    <Box>
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Typography variant="h5" gutterBottom>
-            Welcome back, {user.name}
-          </Typography>
-          <Typography color="text.secondary">
-            Active company: {activeCompany.name}
-          </Typography>
-        </CardContent>
-      </Card>
-    </Box>
+    <Card sx={{ mb: 3 }}>
+      <CardContent>
+        <Typography variant="h5" gutterBottom>
+          Welcome back, {user.name}
+        </Typography>
+        <Typography color="text.secondary">
+          Active company: {activeCompany.name}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 }
