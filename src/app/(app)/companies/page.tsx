@@ -31,6 +31,8 @@ import {
   type AdminCompany,
 } from '@/hooks/useAdminCompanies';
 
+const PAGE_SIZE = 20;
+
 export default function CompaniesPage() {
   const router = useRouter();
   const [page, setPage] = useState(0); // MUI TablePagination is 0-indexed
@@ -56,6 +58,7 @@ export default function CompaniesPage() {
 
   function confirmDelete() {
     if (!deleteTarget) return;
+    setMutationError(null);
     deleteMutation.mutate(deleteTarget.id, {
       onSuccess: closeDeleteDialog,
       onError: () => setMutationError('Failed to delete company. Please try again.'),
@@ -127,11 +130,12 @@ export default function CompaniesPage() {
                       <Button
                         size="small"
                         color="warning"
-                        onClick={() =>
+                        onClick={() => {
+                          setMutationError(null);
                           suspendMutation.mutate(company.id, {
                             onError: () => setMutationError('Failed to suspend company.'),
-                          })
-                        }
+                          });
+                        }}
                       >
                         Suspend
                       </Button>
@@ -140,11 +144,12 @@ export default function CompaniesPage() {
                       <Button
                         size="small"
                         color="success"
-                        onClick={() =>
+                        onClick={() => {
+                          setMutationError(null);
                           activateMutation.mutate(company.id, {
                             onError: () => setMutationError('Failed to activate company.'),
-                          })
-                        }
+                          });
+                        }}
                       >
                         Activate
                       </Button>
@@ -166,8 +171,8 @@ export default function CompaniesPage() {
             component="div"
             count={total}
             page={page}
-            rowsPerPage={20}
-            rowsPerPageOptions={[20]}
+            rowsPerPage={PAGE_SIZE}
+            rowsPerPageOptions={[PAGE_SIZE]}
             onPageChange={(_, newPage) => setPage(newPage)}
           />
         </>
@@ -187,6 +192,8 @@ export default function CompaniesPage() {
             label="Company name"
             value={deleteConfirmText}
             onChange={(e) => setDeleteConfirmText(e.target.value)}
+            autoFocus
+            inputProps={{ autoComplete: 'off' }}
           />
         </DialogContent>
         <DialogActions>
@@ -194,11 +201,11 @@ export default function CompaniesPage() {
           <Button
             color="error"
             variant="contained"
-            disabled={deleteConfirmText !== deleteTarget?.name}
+            disabled={deleteConfirmText !== deleteTarget?.name || deleteMutation.isPending}
             onClick={confirmDelete}
             aria-label="Confirm Delete"
           >
-            Confirm Delete
+            {deleteMutation.isPending ? 'Deleting...' : 'Confirm Delete'}
           </Button>
         </DialogActions>
       </Dialog>

@@ -14,7 +14,9 @@ jest.mock('@/components/admin/StatusChip', () => ({
 
 const mockHooks = hooks as jest.Mocked<typeof hooks>;
 const mockPush = jest.fn();
-const mockMutate = jest.fn();
+const mockDeleteMutate = jest.fn();
+const mockSuspendMutate = jest.fn();
+const mockActivateMutate = jest.fn();
 
 const company1 = {
   id: 1, name: 'Acme Corp', slug: 'acme', email: null, phone: null, city: null,
@@ -34,9 +36,9 @@ beforeEach(() => {
     data: { data: [company1, company2], current_page: 1, last_page: 1, per_page: 20, total: 2 },
     isLoading: false,
   } as any);
-  mockHooks.useDeleteCompany.mockReturnValue({ mutate: mockMutate, isPending: false } as any);
-  mockHooks.useActivateCompany.mockReturnValue({ mutate: mockMutate, isPending: false } as any);
-  mockHooks.useSuspendCompany.mockReturnValue({ mutate: mockMutate, isPending: false } as any);
+  mockHooks.useDeleteCompany.mockReturnValue({ mutate: mockDeleteMutate, isPending: false } as any);
+  mockHooks.useActivateCompany.mockReturnValue({ mutate: mockActivateMutate, isPending: false } as any);
+  mockHooks.useSuspendCompany.mockReturnValue({ mutate: mockSuspendMutate, isPending: false } as any);
 });
 
 describe('CompaniesPage', () => {
@@ -76,14 +78,14 @@ describe('CompaniesPage', () => {
     render(<CompaniesPage />);
     const suspendBtn = screen.getAllByRole('button', { name: /suspend/i })[0];
     fireEvent.click(suspendBtn);
-    expect(mockMutate).toHaveBeenCalledWith(1, expect.any(Object));
+    expect(mockSuspendMutate).toHaveBeenCalledWith(1, expect.any(Object));
   });
 
   it('shows Activate button for trial company and calls useActivateCompany mutate', () => {
     render(<CompaniesPage />);
     const activateBtn = screen.getAllByRole('button', { name: /activate/i })[0];
     fireEvent.click(activateBtn);
-    expect(mockMutate).toHaveBeenCalledWith(2, expect.any(Object));
+    expect(mockActivateMutate).toHaveBeenCalledWith(2, expect.any(Object));
   });
 
   it('opens delete confirmation dialog when Delete is clicked', () => {
@@ -109,6 +111,6 @@ describe('CompaniesPage', () => {
     fireEvent.click(screen.getAllByRole('button', { name: /delete acme corp/i })[0]);
     await userEvent.type(screen.getByRole('textbox', { name: /company name/i }), 'Acme Corp');
     fireEvent.click(screen.getByRole('button', { name: /confirm delete/i }));
-    expect(mockMutate).toHaveBeenCalledWith(1, expect.any(Object));
+    expect(mockDeleteMutate).toHaveBeenCalledWith(1, expect.any(Object));
   });
 });
