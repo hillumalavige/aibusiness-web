@@ -43,14 +43,21 @@ export interface CreateCompanyInput {
   status?: 'trial' | 'active' | 'suspended';
 }
 
-export type UpdateCompanyInput = CreateCompanyInput;
+export interface UpdateCompanyInput {
+  name: string;
+  country: string;
+  email?: string;
+  phone?: string;
+  city?: string;
+  status?: 'trial' | 'active' | 'suspended' | 'cancelled';
+}
 
 // ─── Query keys ──────────────────────────────────────────────────────────────
 
 const keys = {
   list: (page: number) => ['admin', 'companies', 'list', page] as const,
   detail: (id: number) => ['admin', 'companies', 'detail', id] as const,
-  modules: ['admin', 'modules'] as const,
+  modules: () => ['admin', 'modules'] as const,
 };
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
@@ -80,7 +87,7 @@ export function useAdminCompany(id: number) {
 
 export function useAdminModules() {
   return useQuery<AdminModule[]>({
-    queryKey: keys.modules,
+    queryKey: keys.modules(),
     queryFn: () =>
       api
         .get<{ data: AdminModule[] }>('/admin/modules')
@@ -120,7 +127,10 @@ export function useDeleteCompany() {
   return useMutation<void, Error, number>({
     mutationFn: (id) =>
       api.delete(`/admin/companies/${id}`).then(() => undefined),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'companies', 'list'] }),
+    onSuccess: (_data, id) => {
+      qc.invalidateQueries({ queryKey: ['admin', 'companies', 'list'] });
+      qc.invalidateQueries({ queryKey: keys.detail(id) });
+    },
   });
 }
 

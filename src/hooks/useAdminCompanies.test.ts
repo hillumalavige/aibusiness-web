@@ -19,10 +19,15 @@ import {
 jest.mock('@/lib/api');
 const mockApi = api as jest.Mocked<typeof api>;
 
+let queryClient: QueryClient;
+
 function wrapper({ children }: { children: React.ReactNode }) {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return React.createElement(QueryClientProvider, { client: qc }, children);
+  return React.createElement(QueryClientProvider, { client: queryClient }, children);
 }
+
+beforeEach(() => {
+  queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+});
 
 const mockCompany = {
   id: 1, name: 'Acme', slug: 'acme', email: 'a@acme.com',
