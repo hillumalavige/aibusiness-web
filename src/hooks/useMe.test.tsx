@@ -18,21 +18,27 @@ function wrapper({ children }: { children: ReactNode }) {
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
 
+const mockActiveCompany = {
+  id: 10, name: 'Acme', slug: 'acme', status: 'active', enabled_modules: [], is_default: true,
+};
+
 beforeEach(() => {
   jest.clearAllMocks();
   act(() => {
     useAuthStore.setState({
       token: 'tok_123',
       user: null,
-      activeCompany: { id: 10, name: 'Acme' },
+      activeCompany: mockActiveCompany,
     });
   });
 });
 
 describe('useMe', () => {
   it('fetches current user when token is present', async () => {
-    const mockUser = { id: 1, name: 'Alice', email: 'alice@example.com', companies: [] };
-    mockedApi.get.mockResolvedValue({ data: mockUser });
+    const mockUser = { id: 1, name: 'Alice', email: 'alice@example.com', is_super_admin: false };
+    // Backend envelope: { success, message, data: { user, companies } }
+    // Axios wraps in r.data, so mock is { data: { data: { user, companies } } }
+    mockedApi.get.mockResolvedValue({ data: { data: { user: mockUser, companies: [] } } });
 
     const { result } = renderHook(() => useMe(), { wrapper });
 
@@ -54,8 +60,9 @@ describe('useMe', () => {
 
 describe('useCompanies', () => {
   it('fetches companies when token is present', async () => {
-    const mockCompanies = [{ id: 10, name: 'Acme' }];
-    mockedApi.get.mockResolvedValue({ data: mockCompanies });
+    const mockCompanies = [mockActiveCompany];
+    // Backend envelope: { success, message, data: Company[] }
+    mockedApi.get.mockResolvedValue({ data: { data: mockCompanies } });
 
     const { result } = renderHook(() => useCompanies(), { wrapper });
 
