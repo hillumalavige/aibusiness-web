@@ -67,8 +67,23 @@ describe('AppShell', () => {
     expect(screen.getByText('Alice Smith')).toBeInTheDocument();
   });
 
+  it('hides user name when user is not authenticated', () => {
+    mockUseAuthStore.mockImplementation((selector: any) =>
+      selector({ user: null, activeCompany: null }),
+    );
+    render(<AppShell><div>Content</div></AppShell>);
+    expect(screen.queryByText('Alice Smith')).not.toBeInTheDocument();
+  });
+
   it('renders the logout button', () => {
     render(<AppShell><div>Content</div></AppShell>);
     expect(screen.getByRole('button', { name: /logout/i })).toBeInTheDocument();
+  });
+
+  it('shows a spinner when logout is pending', () => {
+    mockUseLogout.mockReturnValue({ mutate: jest.fn(), isPending: true } as any);
+    render(<AppShell><div>Content</div></AppShell>);
+    expect(screen.getByRole('button', { name: /logout/i })).toBeDisabled();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 });
