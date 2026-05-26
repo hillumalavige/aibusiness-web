@@ -42,8 +42,13 @@ describe('LoginPage', () => {
   it('redirects to /dashboard on successful login', async () => {
     mockedApi.post.mockResolvedValue({
       data: {
-        token: 'tok_123',
-        user: { id: 1, name: 'Alice', email: 'alice@example.com', companies: [{ id: 10, name: 'Acme' }] },
+        success: true,
+        message: 'OK',
+        data: {
+          token: 'tok_123',
+          user: { id: 1, name: 'Alice', email: 'alice@example.com', is_super_admin: false },
+          companies: [{ id: 10, name: 'Acme', slug: 'acme', status: 'active', enabled_modules: [], is_default: true }],
+        },
       },
     });
     render(<LoginPage />, { wrapper });

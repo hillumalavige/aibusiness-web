@@ -20,8 +20,8 @@ function wrapper({ children }: { children: ReactNode }) {
 }
 
 const companies = [
-  { id: 10, name: 'Acme Corp' },
-  { id: 20, name: 'Beta LLC' },
+  { id: 10, name: 'Acme Corp', slug: 'acme', status: 'active', enabled_modules: [], is_default: true },
+  { id: 20, name: 'Beta LLC', slug: 'beta', status: 'active', enabled_modules: [], is_default: false },
 ];
 
 beforeEach(() => {
@@ -46,6 +46,6 @@ describe('CompanySwitcher', () => {
     render(<CompanySwitcher />, { wrapper });
     await userEvent.click(screen.getByRole('combobox'));
     await userEvent.click(screen.getByRole('option', { name: 'Beta LLC' }));
-    expect(useAuthStore.getState().activeCompany).toEqual({ id: 20, name: 'Beta LLC' });
+    expect(useAuthStore.getState().activeCompany).toEqual({ id: 20, name: 'Beta LLC', slug: 'beta', status: 'active', enabled_modules: [], is_default: false });
   });
 });
