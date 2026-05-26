@@ -9,6 +9,7 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { isAxiosError } from 'axios';
 import { useMe } from '@/hooks/useMe';
 import { useUpdateProfile, useChangePassword } from '@/hooks/useProfile';
 
@@ -137,7 +138,7 @@ function PasswordForm() {
   }
 
   const apiError = passwordMutation.isError
-    ? ((passwordMutation.error as any)?.response?.data?.message ?? 'Failed to update password. Please try again.')
+    ? (isAxiosError(passwordMutation.error) ? passwordMutation.error.response?.data?.message : undefined) ?? 'Failed to update password. Please try again.'
     : null;
 
   return (

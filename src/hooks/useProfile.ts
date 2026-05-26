@@ -1,5 +1,6 @@
 // src/hooks/useProfile.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 import api from '@/lib/api';
 import { useAuthStore, User } from '@/store/auth';
 
@@ -33,7 +34,7 @@ export function useUpdateProfile() {
 }
 
 export function useChangePassword() {
-  return useMutation<void, Error, ChangePasswordInput>({
+  return useMutation<void, AxiosError<{ message: string }>, ChangePasswordInput>({
     mutationFn: (input) =>
       api
         .post('/me/password', input)
