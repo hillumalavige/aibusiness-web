@@ -1,4 +1,4 @@
-// src/hooks/useMe.test.ts
+// src/hooks/useMe.test.tsx
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
@@ -14,7 +14,9 @@ jest.mock('@/lib/api', () => ({
 const mockedApi = api as jest.Mocked<typeof api>;
 
 function wrapper({ children }: { children: ReactNode }) {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
 
@@ -24,15 +26,32 @@ beforeEach(() => {
     useAuthStore.setState({
       token: 'tok_123',
       user: null,
-      activeCompany: { id: 10, name: 'Acme' },
+      activeCompany: {
+        id: 10,
+        name: 'Acme',
+        slug: 'acme',
+        status: 'active',
+        enabled_modules: [],
+        is_default: true,
+      },
     });
   });
 });
 
 describe('useMe', () => {
   it('fetches current user when token is present', async () => {
-    const mockUser = { id: 1, name: 'Alice', email: 'alice@example.com', companies: [] };
-    mockedApi.get.mockResolvedValue({ data: mockUser });
+    const mockUser = { id: 1, name: 'Alice', email: 'alice@example.com', is_super_admin: false };
+    // GET /v1/me envelope: { success, message, data: { user, companies } }
+    mockedApi.get.mockResolvedValue({
+      data: {
+        success: true,
+        message: 'OK',
+        data: {
+          user: mockUser,
+          companies: [{ id: 10, name: 'Acme', slug: 'acme', status: 'active', enabled_modules: [], is_default: true }],
+        },
+      },
+    });
 
     const { result } = renderHook(() => useMe(), { wrapper });
 
@@ -54,8 +73,17 @@ describe('useMe', () => {
 
 describe('useCompanies', () => {
   it('fetches companies when token is present', async () => {
-    const mockCompanies = [{ id: 10, name: 'Acme' }];
-    mockedApi.get.mockResolvedValue({ data: mockCompanies });
+    const mockCompanies = [
+      { id: 10, name: 'Acme', slug: 'acme', status: 'active', enabled_modules: ['hr'], is_default: true },
+    ];
+    // GET /v1/me/companies envelope: { success, message, data: Company[] }
+    mockedApi.get.mockResolvedValue({
+      data: {
+        success: true,
+        message: 'OK',
+        data: mockCompanies,
+      },
+    });
 
     const { result } = renderHook(() => useCompanies(), { wrapper });
 
