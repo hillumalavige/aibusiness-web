@@ -193,7 +193,7 @@ export default function CompaniesPage() {
             value={deleteConfirmText}
             onChange={(e) => setDeleteConfirmText(e.target.value)}
             autoFocus
-            inputProps={{ autoComplete: 'off' }}
+            slotProps={{ htmlInput: { autoComplete: 'off' } }}
           />
         </DialogContent>
         <DialogActions>
